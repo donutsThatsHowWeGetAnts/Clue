@@ -11,6 +11,8 @@ package clue.GamePieces;
  */
 public class Rooms {
 	
+	public void Rooms() {}
+	
 	/**
 	 *
 	 */
@@ -80,5 +82,5 @@ public class Rooms {
 			return numVal;
 		}
 	}
-
+	
 }

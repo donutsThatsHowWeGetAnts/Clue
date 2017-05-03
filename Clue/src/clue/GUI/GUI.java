@@ -5,6 +5,7 @@
  */
 package clue.GUI;
 
+import clue.Utilities.BoardGameManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -34,9 +35,8 @@ public class GUI {
 	private final int GAME_BOARD_DIM = 22;
 	private static final int WIDTH = 700;
 	private static final int HEIGHT = 700;
+	private BoardGameManager boardGameManager = null;
 	
-	jj >= 0 && jj <= 4 && ii >= 0 && ii <= 4
-
     GUI() {
         initialiseGUI();
     }
@@ -66,11 +66,26 @@ public class GUI {
                 b.setMargin(buttonMargin);
 				
 				// create the different rooms
-				if ( jj >= 0 && jj <= 4 && ii >= 0 && ii <= 4 ) {
+				if (jj >= 0 && jj <= 3 && ii >= 0 && ii <= 4) {
 					
 					// STUDY ROOM
 					b.setBackground(Color.RED);
-					if (ii == 2 && jj >= 0 && jj <= 5 ) {
+					
+					// set the door(s)
+					if (ii == 4 && jj == 3) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
+					if (ii == 2 && jj >= 0 && jj <= 4) {
 						switch (jj) {
 							case 0:
 								b.setText("S");
@@ -82,7 +97,7 @@ public class GUI {
 								b.setText("U");
 								break;
 							case 3:
-								b.setText("D");
+								b.setText("DY");
 								break;
 							case 4:
 								b.setText("Y");
@@ -92,22 +107,37 @@ public class GUI {
 						}
 					}
 							
-				} else if ( jj >= 7 && jj <= 12 && ii >= 0 && ii <= 6 ) {
+				} else if (jj >= 6 && jj <= 12 && ii >= 0 && ii <= 6) {
 					
 					// HALL ROOM
 					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if ((ii == 6 && (jj == 8 || jj == 9)) || (ii == 3 && jj == 6)) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
 					if (ii == 3 && jj >= 7 && jj <= 12 ) {
 						switch (jj) {
-							case 8:
+							case 7:
 								b.setText("H");
 								break;
-							case 9:
+							case 8:
 								b.setText("A");
 								break;
-							case 10:
+							case 9:
 								b.setText("L");
 								break;
-							case 11:
+							case 10:
 								b.setText("L");
 								break;
 							default:
@@ -115,10 +145,25 @@ public class GUI {
 						}
 					}
 					
-				} else if( jj >= 15 && jj <= 21 && ii >= 0 && ii <= 5 ) {
+				} else if(jj >= 15 && jj <= 21 && ii >= 0 && ii <= 5) {
 					
 					// LOUNGE ROOM
 					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if (ii == 5 && jj == 15) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
 					if (ii == 3 && jj >= 15 && jj <= 21 ) {
 						switch (jj) {
 							case 15:
@@ -144,8 +189,259 @@ public class GUI {
 						}
 					}
 					
+				} else if (jj >= 0 && jj <= 3 && ii >= 7 && ii <= 10) {
+					
+					// LIBRARY ROOM
+					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if ((ii == 8 && jj == 3) || (ii == 10 && jj == 1)) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
+					if (ii == 9 && jj >= 0 && jj <= 4) {
+						switch (jj) {
+							case 0:
+								b.setText("LI");
+								break;
+							case 1:
+								b.setText("BR");
+								break;
+							case 2:
+								b.setText("AR");
+								break;
+							case 3:
+								b.setText("Y");
+								break;
+							case 4:
+								break;
+							default:
+								break;
+						}
+					}
+				} else if(jj >= 0 && jj <= 3 && ii >= 13 && ii <= 16) {
+					
+					// BILLARDS ROOM
+					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if ((ii == 13 && jj == 0) || (ii == 15 && jj == 3)) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
+					if (ii == 14 && jj >= 0 && jj <= 3) {
+						switch (jj) {
+							case 0:
+								b.setText("BI");
+								break;
+							case 1:
+								b.setText("LL");
+								break;
+							case 2:
+								b.setText("AR");
+								break;
+							case 3:
+								b.setText("DS");
+								break;
+							case 4:
+								break;
+							default:
+								break;
+						}
+					}
+					
+				} else if (jj >= 0 && jj <= 3 && ii >= 19 && ii <= 21) {
+					
+					// CONSERVATORY ROOM
+					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if (ii == 19 && jj == 3) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
+					if (ii == 20 && jj >= 0 && jj <= 3) {
+						switch (jj) {
+							case 0:
+								b.setText("CON");
+								break;
+							case 1:
+								b.setText("SER");
+								break;
+							case 2:
+								b.setText("VAT");
+								break;
+							case 3:
+								b.setText("ORY");
+								break;
+							case 4:
+								break;
+							default:
+								break;
+						}
+					}
+					
+				} else if (jj >= 6 && jj <= 12 && ii >= 15 && ii <= 21) {
+					
+					// BALLROOM ROOM
+					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if ((ii == 18 && jj == 6) || (ii == 18 && jj == 12) || (ii == 15 && jj == 7) || (ii == 15 && jj == 11)) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
+					if (ii == 18 && jj >= 7 && jj <= 10 ) {
+						switch (jj) {
+							case 7:
+								b.setText("BA");
+								break;
+							case 8:
+								b.setText("LL");
+								break;
+							case 9:
+								b.setText("RO");
+								break;
+							case 10:
+								b.setText("OM");
+								break;
+							default:
+								break;
+						}
+					}
+					
+				} else if(jj >= 15 && jj <= 21 && ii >= 16 && ii <= 21) {
+					
+					// KITCHEN ROOM
+					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if (ii == 16 && jj == 16) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
+					if (ii == 18 && jj >= 16 && jj <= 19) {
+						switch (jj) {
+							case 16:
+								b.setText("KI");
+								break;
+							case 17:
+								b.setText("TC");
+								break;
+							case 18:
+								b.setText("HE");
+								break;
+							case 19:
+								b.setText("N");
+								break;
+							case 4:
+								break;
+							default:
+								break;
+						}
+					}
+					
+				} else if(jj >= 15 && jj <= 21 && ii >= 9 && ii <= 13) {
+					
+					// DINING ROOM
+					b.setBackground(Color.RED);
+					
+					// set the door(s)
+					if ((ii == 11 && jj == 15) || (ii == 9 && jj == 17)) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+					} else {
+						b.enableInputMethods(false);
+						b.setSelected(false);
+						b.setBorderPainted(false);
+						b.setFocusPainted(false);
+						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					}
+					
+					if (ii == 11 && jj >= 16 && jj <= 20) {
+						switch (jj) {
+							case 16:
+								b.setText("DI");
+								break;
+							case 17:
+								b.setText("NI");
+								break;
+							case 18:
+								b.setText("NG");
+								break;
+							case 19:
+								b.setText("RO");
+								break;
+							case 20:
+								b.setText("OM");
+								break;
+							default:
+								break;
+						}
+					}
+					
+				} else if (jj >= 7 && jj <= 11 && ii >= 8 && ii <= 12) {
+					
+					// CONFIDENTIAL
+					b.setBackground(Color.GRAY);
+					b.enableInputMethods(false);
+					b.setSelected(false);
+					b.setBorderPainted(false);
+					b.setFocusPainted(false);
+					BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
+					BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					
 				} else {
 					b.setBackground(Color.YELLOW);
+					BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
+					BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
 				}
                 gameBoardSquares[jj][ii] = b;
             }
@@ -175,7 +471,7 @@ public class GUI {
         }
 	}
 	
-    public final JComponent getChessBoard() {
+    public final JComponent getGameBoard() {
         return gameBoard;
     }
 
