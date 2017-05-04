@@ -5,12 +5,27 @@
  */
 package clue.GUI;
 
+import clue.Network.Client;
+import clue.Network.ClientInstance;
+import clue.Network.ClientListener;
+import clue.Network.Server;
+import clue.Network.ServerListener;
 import clue.Utilities.BoardGameManager;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.io.PrintWriter;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
@@ -36,10 +51,114 @@ public class GUI {
 	private static final int WIDTH = 700;
 	private static final int HEIGHT = 700;
 	private BoardGameManager boardGameManager = null;
+	private List<ClientInstance> list = new ArrayList<ClientInstance>();
+	private String serverIP = "";
+	private String clientIP = "";
+	private Server server = null;
+	private ServerListener serverListener = new ServerListener() {
+
+		@Override
+		public void clientConncted(ClientInstance client, PrintWriter out) {
+			System.out.println("LENDER -- client connected: " + client.ip);
+			list.add(new ClientInstance(client.ip, client.port));
+		}
+
+		@Override
+		public void clientDisconnected(ClientInstance client) {
+			list.remove(new ClientInstance(client.ip, client.port));
+		}
+
+		@Override
+		public void recivedInput(ClientInstance client, String msg) {
+			System.out.println("LENDER -- received message from " + client.ip + " with message: " + msg);
+		}
+
+		@Override
+		public void serverClosed() {
+			System.out.println("LENDER -- server closed");
+		}
+	};
+	private final int defaultServerPort = 6666;
+	private final int defaultClientPort = 7777;
+	
+	private Client client = null;
+	private ClientListener clientListener = new ClientListener() {
+
+		@Override
+		public void unknownHost() {
+			System.out.println("LENDER -- unknown host!");
+		}
+
+		@Override
+		public void couldNotConnect() {
+			System.out.println("LENDER -- could not connect to server");
+		}
+
+		@Override
+		public void recivedInput(String msg) {
+			System.out.println("LENDER -- received message: " + msg);
+		}
+
+		@Override
+		public void serverClosed() {
+			System.out.println("LENDER -- server is closed");
+		}
+
+		@Override
+		public void disconnected() {
+			System.out.println("LENDER -- server is disconnected");
+		}
+
+		@Override
+		public void connectedToServer() {
+			System.out.println("We have an incomming player!");
+		}
+	};
 	
     GUI() {
         initialiseGUI();
     }
+	
+	public void initialiseServer() {
+		try(final DatagramSocket socket = new DatagramSocket()){
+			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+			serverIP = socket.getLocalAddress().getHostAddress();
+			System.out.println("LENDER -- server ip is + " + serverIP);
+			server = new Server(defaultServerPort, serverListener);
+			System.out.println("LENDER -- server ip is now " + server.getIp());
+		} catch (UnknownHostException ex) {
+			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SocketException ex) {
+			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+		}
+	}
+	
+	public void initialiseClient() {
+		try(final DatagramSocket socket = new DatagramSocket()){
+			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
+			clientIP = socket.getLocalAddress().getHostAddress();
+			System.out.println("LENDER -- client ip is + " + serverIP);
+			client = new Client(clientIP, defaultServerPort, clientListener);
+			System.out.println("LENDER -- client ip is connected " + client.isConnected());
+		} catch (UnknownHostException ex) {
+			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (SocketException ex) {
+			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
+		}
+		
+	}
+	
+	public void disposeClientServer() {
+		if (null != client) {
+			
+			for (ClientInstance ci : list) {
+				this.server.kickClient(ci);
+			}
+			
+			this.client.dispose();
+			System.out.println("LENDER -- client connection is " + this.client.isConnected());
+		}
+	}
 	
 	public void initialiseGUI() {
         // setup the main GUI
@@ -47,9 +166,29 @@ public class GUI {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
-        tools.add(new JButton("Join Game")); // TODO - add functionality!
+		JButton join = new JButton("Join Game");
+		
+		// add the listener to the jbutton to handle the "pressed" event
+		join.addActionListener((ActionEvent e) -> {
+			// join the game
+			if (null == server) {
+				initialiseServer();
+			}
+			initialiseClient();
+		});
+		
+        tools.add(join); // TODO - add functionality!
 		tools.addSeparator();
-        tools.add(new JButton("Exit Game")); // TODO - add functionality!
+		
+		JButton exit = new JButton("Exit Game");
+		
+		// add the listener to the jbutton to handle the "pressed" event
+		exit.addActionListener((ActionEvent e) -> {
+			// join the game
+			disposeClientServer();
+		});
+		
+        tools.add(exit); // TODO - add functionality!
         tools.addSeparator();
 
         gui.add(new JLabel(""), BorderLayout.LINE_START);
