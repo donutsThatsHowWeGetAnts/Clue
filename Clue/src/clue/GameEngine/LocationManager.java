@@ -7,6 +7,7 @@ package clue.GameEngine;
 
 import clue.GamePieces.Player;
 import clue.Helpers.Location;
+import clue.Utilities.BoardGameManager;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,15 +47,14 @@ public class LocationManager {
 	}
 	
 	public void setup(List<Location> list) {
-		for (Location loc : list) {
-			occupied.put(loc, false);
+		for (Location loc : list) { 
 			if ((loc.getY() == 18 && loc.getX() == 0) || (loc.getY() == 6 && loc.getX() == 0) ||(loc.getY() == 0 && loc.getX() == 14) || (loc.getY() == 6 && loc.getX() == 21) || (loc.getY() == 21 && loc.getX() == 5) || (loc.getY() == 21 && loc.getX() == 13)) {
 				loc.setColor(Color.ORANGE);
 			}
+			occupied.put(loc, false);
 			defaultColors.add(loc);
+			
 		}
-		
-		printOccupied();
 	}
 	
 	public HashMap<Location, Boolean> getOccupied() {
@@ -115,7 +115,6 @@ public class LocationManager {
 		} else {
 			location.setColor(player.getPlayerColor());
 			occupied.put(location, true);
-			System.out.println("LENDER -- modified value to " + location.getColor());
 			return true;
 		}
 			
@@ -126,7 +125,6 @@ public class LocationManager {
 		
 		while(it.hasNext()) {
 			Map.Entry<Location, Boolean> pair = (Map.Entry) it.next();
-			System.out.println("LENDER -- VALUES -- " + pair.getKey().toString() + " with color " + pair.getKey().getColor());
 		}
 		
 	}
@@ -135,8 +133,6 @@ public class LocationManager {
 		
 		Iterator it = occupied.entrySet().iterator();
 		
-		System.out.println("LENDER -- location is " + location.toString());
-
 		while(it.hasNext()) {
 			Map.Entry<Location, Boolean> pair = (Map.Entry) it.next();
 
@@ -148,9 +144,11 @@ public class LocationManager {
 		
 		for (Location lo: defaultColors) {
 			if (lo.equals(location)) {
-				System.out.println("LENDER -- setting default color " + lo.getColor());
-				location.setColor(lo.getColor());
-				occupied.put(location, false);
+				
+				if (!BoardGameManager.getInstance().getIsDoorButton(lo.getX(), lo.getY())) {
+					lo.setColor(Color.ORANGE);
+				} 
+				occupied.put(lo, false);
 			}
 		}
 		

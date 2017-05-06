@@ -8,6 +8,7 @@ package clue.Dialog;
 import clue.GameEngine.CardManager;
 import clue.GameEngine.SuggestedInformation;
 import clue.GamePieces.Card;
+import clue.Network.Client;
 import javax.swing.ButtonModel;
 import javax.swing.JOptionPane;
 
@@ -17,11 +18,16 @@ import javax.swing.JOptionPane;
  */
 public class SuggestionDialog extends javax.swing.JFrame {
 
+	private String pl = "";
+	private Client client;
+	
 	/**
 	 * Creates new form SuggestionDialog
 	 */
-	public SuggestionDialog() {
+	public SuggestionDialog(String player) {
 		initComponents();
+		
+		pl = player;
 		
 		// killers
 		buttonGroup1.add(scarletBtn);
@@ -495,7 +501,7 @@ public class SuggestionDialog extends javax.swing.JFrame {
 		
 		SuggestedInformation.getInstance().room = card.getCard(card.desc);
 		
-		System.out.println("LENDER -- solution chosen is " + SuggestedInformation.getInstance().room.desc + " " + SuggestedInformation.getInstance().killer + " " + SuggestedInformation.getInstance().weapon);
+		client.send("SUGG" + SuggestedInformation.getInstance().killer.desc);
 		
 		this.setVisible(false);
 		
@@ -504,7 +510,7 @@ public class SuggestionDialog extends javax.swing.JFrame {
 			&& CardManager.getInstance().getRoom() == SuggestedInformation.getInstance().room) {
 			
 			JOptionPane.showMessageDialog(null,
-								"Congratulations! You won the game!");
+								"Congratulations, " + pl + "! You won the game!");
 			SuggestedInformation.getInstance().win = true;
 		} else {
 			JOptionPane.showMessageDialog(null,
@@ -544,7 +550,7 @@ public class SuggestionDialog extends javax.swing.JFrame {
 		/* Create and display the form */
 		java.awt.EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				new SuggestionDialog().setVisible(true);
+				new SuggestionDialog("").setVisible(true);
 			}
 		});
 	}
@@ -579,4 +585,8 @@ public class SuggestionDialog extends javax.swing.JFrame {
     private javax.swing.JRadioButton studyBtn;
     private javax.swing.JRadioButton wrenchBtn;
     // End of variables declaration//GEN-END:variables
+
+	public void setClient(Client c) {
+		client = c;
+	}
 }

@@ -99,7 +99,7 @@ public class GUI {
 
 		@Override
 		public void clientConncted(ClientInstance client, PrintWriter out) {
-			System.out.println("LENDER -- client connected: " + client.ip);
+			System.out.println("Client connected: " + client.ip);
 			playerList.add(new ClientInstance(client.ip, client.port));
 		}
 
@@ -126,16 +126,20 @@ public class GUI {
 					Location lo = new Location(0,0);
 					String[] split = msg.replace("MOVE", "").split("\\s+");
 					//LocationManager.getInstance().moveToLocation(null, greenPlayer)
-					System.out.println("LENDER -- move event is " + msg);
+					System.out.println("Move event is " + msg);
+				} else if (msg.contains("SUGG")) {
+					String proposed = msg.replace("SUGG", "");
+					Card card = globalCard.getCard(proposed);
+					System.out.println("Received suggestion of " + card.desc);
+					receiveSuggestion(card);
 				}
 				
-				System.out.println("LENDER -- the solution from MASTER CONTROLLER is " + CardManager.getInstance().toString());
 			} else {
 				if (msg.contains("MOVE")) {
 					Location lo = new Location(0,0);
 					String[] split = msg.replace("MOVE", "").split("\\s+");
 					//LocationManager.getInstance().moveToLocation(null, greenPlayer
-					System.out.println("LENDER -- move event is " + split);
+					System.out.println("Move event is " + split);
 				}
 			}
 			
@@ -143,7 +147,7 @@ public class GUI {
 
 		@Override
 		public void serverClosed() {
-			System.out.println("LENDER -- server closed");
+			System.out.println("Server closed");
 		}
 	};
 	private final int defaultServerPort = 6666;
@@ -153,28 +157,28 @@ public class GUI {
 
 		@Override
 		public void unknownHost() {
-			System.out.println("LENDER -- unknown host!");
+			System.out.println("Unknown host!");
 		}
 
 		@Override
 		public void couldNotConnect() {
-			System.out.println("LENDER -- could not connect to server");
+			System.out.println("could not connect to server");
 		}
 
 		@Override
 		public void recivedInput(String msg) {
 			// TODO : add reading of data here
-			System.out.println("LENDER -- received message: " + msg);
+			System.out.println("received message: " + msg);
 		}
 
 		@Override
 		public void serverClosed() {
-			System.out.println("LENDER -- server is closed");
+			System.out.println("server is closed");
 		}
 
 		@Override
 		public void disconnected() {
-			System.out.println("LENDER -- server is disconnected");
+			System.out.println("server is disconnected");
 		}
 
 		@Override
@@ -195,9 +199,9 @@ public class GUI {
 		try(final DatagramSocket socket = new DatagramSocket()){
 			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
 			serverIP = socket.getLocalAddress().getHostAddress();
-			System.out.println("LENDER -- server ip is + " + serverIP);
+			System.out.println("server ip is + " + serverIP);
 			server = new Server(defaultServerPort, serverListener);
-			System.out.println("LENDER -- server ip is now " + server.getIp());
+			System.out.println("server ip is now " + server.getIp());
 		} catch (UnknownHostException ex) {
 			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SocketException ex) {
@@ -256,7 +260,7 @@ public class GUI {
 		
 		determineSolution();
 		distributeCards();
-		System.out.println("LENDER -- the solution is " + CardManager.getInstance().toString());
+		System.out.println("the solution is " + CardManager.getInstance().toString());
 		
 	}
 	
@@ -340,7 +344,7 @@ public class GUI {
 		all += greenPlayer.printCards();
 		all += profPlumPlayer.printCards();
 		all += whitePlayer.printCards();
-		System.out.println("LENDER -- all is " + all);
+		System.out.println("all is " + all);
 	}
 	
 	private void determineSolution() {
@@ -437,9 +441,9 @@ public class GUI {
 		try(final DatagramSocket socket = new DatagramSocket()){
 			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
 			clientIP = socket.getLocalAddress().getHostAddress();
-			System.out.println("LENDER -- client ip is + " + serverIP);
+			System.out.println("client ip is + " + serverIP);
 			client = new Client(clientIP, defaultServerPort, clientListener);
-			System.out.println("LENDER -- client ip is connected " + client.isConnected());
+			System.out.println("client ip is connected " + client.isConnected());
 		} catch (UnknownHostException ex) {
 			Logger.getLogger(GUI.class.getName()).log(Level.SEVERE, null, ex);
 		} catch (SocketException ex) {
@@ -460,7 +464,7 @@ public class GUI {
 			}
 			
 			this.client.dispose();
-			System.out.println("LENDER -- client connection is " + this.client.isConnected());
+			System.out.println("client connection is " + this.client.isConnected());
 		}
 	}
 	
@@ -1130,7 +1134,6 @@ public class GUI {
 					
 					canMoveTo.add(l);
 					hallwayPositionMoveTo.add(l);
-					b.setBackground(Color.CYAN);
 				}
 				
                 gameBoardSquares[jj][ii] = b;
@@ -1204,13 +1207,196 @@ public class GUI {
         };
         SwingUtilities.invokeLater(r);
     }
-
+	
 	private void viewMyCards() {
+		if (currentPlayerTurn.equalsIgnoreCase(Card.scarlet.desc)) {
+			JOptionPane.showMessageDialog(null,
+								scarletPlayer.getWeapon().desc + " \n" + scarletPlayer.getRoom().desc);
+		} else if (currentPlayerTurn.equalsIgnoreCase(Card.plum.desc)) {
+			JOptionPane.showMessageDialog(null,
+								profPlumPlayer.getWeapon().desc + " \n" + profPlumPlayer.getRoom().desc);
+		} else if (currentPlayerTurn.equalsIgnoreCase(Card.green.desc)) {
+			JOptionPane.showMessageDialog(null,
+								greenPlayer.getWeapon().desc + " \n" + greenPlayer.getRoom().desc);
+		} else if (currentPlayerTurn.equalsIgnoreCase(Card.white.desc)) {
+			JOptionPane.showMessageDialog(null,
+								whitePlayer.getWeapon().desc + " \n" + whitePlayer.getRoom().desc);
+		} else if (currentPlayerTurn.equalsIgnoreCase(Card.mustard.desc)) {
+			JOptionPane.showMessageDialog(null,
+								colMustardPlayer.getWeapon().desc + " \n" + colMustardPlayer.getRoom().desc);
+		} else if (currentPlayerTurn.equalsIgnoreCase(Card.peacock.desc)) {
+			JOptionPane.showMessageDialog(null,
+								mrsPeacockPlayer.getWeapon().desc + " \n" + mrsPeacockPlayer.getRoom().desc);
+		}
+	}
+	
+	public void receiveSuggestion(Card card) {
+		
+		Location location = new Location(0,0);
+		Location previous = new Location(0,0);
+		
+		boolean scar = false;
+		boolean green = false;
+		boolean white = false;
+		boolean mustard = false;
+		boolean plum = false;
+		boolean pea = false;
+		
+		if (currentPlayerTurn.equals(Card.scarlet.desc)) {
+			scar = true;
+			location = BoardGameManager.getInstance().getClosestDoor(scarletPlayer.getLocation().getX(), scarletPlayer.getLocation().getY());
+		} else if (currentPlayerTurn.equals(Card.peacock.desc)) {
+			pea = true;
+			location = BoardGameManager.getInstance().getClosestDoor(mrsPeacockPlayer.getLocation().getX(), mrsPeacockPlayer.getLocation().getY());
+		} else if (currentPlayerTurn.equals(Card.plum.desc)) {
+			plum = true;
+			location = BoardGameManager.getInstance().getClosestDoor(profPlumPlayer.getLocation().getX(), profPlumPlayer.getLocation().getY());
+		} else if (currentPlayerTurn.equals(Card.mustard.desc)) {
+			mustard = true;
+			location = BoardGameManager.getInstance().getClosestDoor(colMustardPlayer.getLocation().getX(), colMustardPlayer.getLocation().getY());
+		} else if (currentPlayerTurn.equals(Card.white.desc)) {
+			white = true;
+			location = BoardGameManager.getInstance().getClosestDoor(whitePlayer.getLocation().getX(), whitePlayer.getLocation().getY());
+		} else if (currentPlayerTurn.equals(Card.green.desc)) {
+			green = true;
+			location = BoardGameManager.getInstance().getClosestDoor(greenPlayer.getLocation().getX(), greenPlayer.getLocation().getY());
+		}
+		
+		if (card.desc.equals(Card.scarlet.desc)) {
+			previous = scarletPlayer.getLocation();
+			movePlayer(location, previous, scarletPlayer);
+		} else if (card.desc.equals(Card.peacock.desc)) {
+			previous = mrsPeacockPlayer.getLocation();
+			movePlayer(location, previous, mrsPeacockPlayer);
+		} else if (card.desc.equals(Card.plum.desc)) {
+			previous = profPlumPlayer.getLocation();
+			movePlayer(location, previous, profPlumPlayer);
+		} else if (card.desc.equals(Card.mustard.desc)) {
+			previous = colMustardPlayer.getLocation();
+			movePlayer(location, previous, colMustardPlayer);
+		} else if (card.desc.equals(Card.white.desc)) {
+			previous = whitePlayer.getLocation();
+			movePlayer(location, previous, whitePlayer);
+		} else if (card.desc.equals(Card.green.desc)) {
+			previous = greenPlayer.getLocation();
+			movePlayer(location, previous, greenPlayer);
+		}
+		
+	}
+	
+	
+	private void movePlayer(Location moveToLocation, Location previousLocation, Player player) {
+
+		boolean didMove = LocationManager.getInstance().moveToLocation(moveToLocation, player);
+
+		if (didMove) {
+			player.setLocation(moveToLocation);
+		}
+				
+		LocationManager.getInstance().makeDefaultColor(previousLocation);
+		Iterator it = LocationManager.getInstance().getOccupied().entrySet().iterator();
+
+		while(it.hasNext()) {
+			Map.Entry<Location, Boolean> pair = (Map.Entry) it.next();
+			gameBoardSquares[pair.getKey().getX()][pair.getKey().getY()].setBackground(pair.getKey().getColor());
+		}
+		
+		
 	}
 
 	private void makeSuggestion() {
-		SuggestionDialog s = new SuggestionDialog();
-		s.setVisible(true);
+		
+		boolean scarlet = BoardGameManager.getInstance().getIsDoorButton(scarletPlayer.getLocation().getX(), scarletPlayer.getLocation().getY());
+		boolean green = BoardGameManager.getInstance().getIsDoorButton(greenPlayer.getLocation().getX(), greenPlayer.getLocation().getY());
+		boolean white = BoardGameManager.getInstance().getIsDoorButton(whitePlayer.getLocation().getX(), whitePlayer.getLocation().getY());
+		boolean mustard = BoardGameManager.getInstance().getIsDoorButton(colMustardPlayer.getLocation().getX(), colMustardPlayer.getLocation().getY());
+		boolean peacock = BoardGameManager.getInstance().getIsDoorButton(mrsPeacockPlayer.getLocation().getX(), mrsPeacockPlayer.getLocation().getY());
+		boolean profplum = BoardGameManager.getInstance().getIsDoorButton(profPlumPlayer.getLocation().getX(), profPlumPlayer.getLocation().getY());
+		
+		boolean canMakeSuggestion = false;
+		
+		switch (takeTurnCounter%6) {
+			case 0:
+				canMakeSuggestion = scarlet;
+				
+				if (canMakeSuggestion) {
+					currentPlayerTurn = Card.scarlet.desc;
+					SuggestionDialog s = new SuggestionDialog(Card.scarlet.desc);
+					s.setClient(client);
+					s.setVisible(true);
+					takeTurnCounter++;
+				} else {
+					JOptionPane.showMessageDialog(null,
+								"Sorry, you cannot make a suggestion!");
+				}
+				break;
+			case 1:
+				canMakeSuggestion = profplum;
+				if (canMakeSuggestion) {
+					currentPlayerTurn = Card.plum.desc;
+					SuggestionDialog s = new SuggestionDialog(Card.plum.desc);
+					s.setClient(client);
+					s.setVisible(true);
+					takeTurnCounter++;
+				} else {
+					JOptionPane.showMessageDialog(null,
+								"Sorry, you cannot make a suggestion!");
+				}
+				break;
+			case 2:
+				canMakeSuggestion = green;
+				if (canMakeSuggestion) {
+					currentPlayerTurn = Card.green.desc;
+					SuggestionDialog s = new SuggestionDialog(Card.green.desc);
+					s.setClient(client);
+					s.setVisible(true);
+					takeTurnCounter++;
+				} else {
+					JOptionPane.showMessageDialog(null,
+								"Sorry, you cannot make a suggestion!");
+				}
+				break;
+			case 3:
+				canMakeSuggestion = white;
+				if (canMakeSuggestion) {
+					currentPlayerTurn = Card.white.desc;
+					SuggestionDialog s = new SuggestionDialog(Card.white.desc);
+					s.setClient(client);
+					s.setVisible(true);
+					takeTurnCounter++;
+				} else {
+					JOptionPane.showMessageDialog(null,
+								"Sorry, you cannot make a suggestion!");
+				}
+				break;
+			case 4:
+				canMakeSuggestion = mustard;
+				if (canMakeSuggestion) {
+					currentPlayerTurn = Card.mustard.desc;
+					SuggestionDialog s = new SuggestionDialog(Card.mustard.desc);
+					s.setClient(client);
+					s.setVisible(true);
+					takeTurnCounter++;
+				} else {
+					JOptionPane.showMessageDialog(null,
+								"Sorry, you cannot make a suggestion!");
+				}
+				break;
+			case 5:
+				canMakeSuggestion = peacock;
+				if (canMakeSuggestion) {
+					currentPlayerTurn = Card.peacock.desc;
+					SuggestionDialog s = new SuggestionDialog(Card.peacock.desc);
+					s.setClient(client);
+					s.setVisible(true);
+					takeTurnCounter++;
+				} else {
+					JOptionPane.showMessageDialog(null,
+								"Sorry, you cannot make a suggestion!");
+				}
+				break;
+				
+		}
 	}
 
 	private void takeTurn() {
@@ -1248,8 +1434,6 @@ public class GUI {
 				response = JOptionPane.showOptionDialog(null, "Miss Scarlet, please choose a location to go to", "Move Choice", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
 				
 				de = scarletPlayer.getLocation();
-				
-				System.out.println("LENDER -- de is " + de.getX() + ", " + de.getY());
 				
 				didMove = LocationManager.getInstance().moveToLocation(list.get(response), scarletPlayer);
 				
@@ -1437,8 +1621,6 @@ public class GUI {
 			Map.Entry<Location, Boolean> pair = (Map.Entry) it.next();
 			gameBoardSquares[pair.getKey().getX()][pair.getKey().getY()].setBackground(pair.getKey().getColor());
 		}
-		
-		LocationManager.getInstance().printOccupied();
 		
 		if (playerList.size() == 1) {
 			if (currentPlayerTurn.equalsIgnoreCase(Card.scarlet.desc)) {

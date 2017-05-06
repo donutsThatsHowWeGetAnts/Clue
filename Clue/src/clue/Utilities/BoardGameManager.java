@@ -5,6 +5,8 @@
  */
 package clue.Utilities;
 
+import clue.Helpers.Location;
+
 /**
  *
  * @author glender
@@ -55,8 +57,33 @@ public class BoardGameManager {
 		return this.canClickButton[i][j];
 	}
 	
-	public boolean getIsDoorButton(int i, int j) {
-		return this.isDoorButton[i][j];
+	public boolean getIsDoorButton(int x, int y) {
+		return this.isDoorButton[x][y];
+	}
+
+	public Location getClosestDoor(int x, int y) {
+		double distance = 100000;
+		int finalX = 0;
+		int finalY = 0;
+		
+		if (isDoorButton[x+1][y]) {
+			return new Location(x+1, y);
+		} else if (isDoorButton[x+1][y+1]) {
+			return new Location(x+1, y+1);
+		} else if (isDoorButton[x+1][y-1]) {
+			return new Location(x+1, y-1);
+		} else if (isDoorButton[x-1][y]) {
+			return new Location(x-1, y);
+		} else if (isDoorButton[x-1][y+1]) {
+			return new Location(x-1, y+1);
+		} else if (isDoorButton[x][y-1]) {
+			return new Location(x, y-1);
+		} else if (isDoorButton[x][y+1]) {
+			return new Location(x, y+1);
+		}
+		
+		return new Location(finalX, finalY);
+		
 	}
 	
 }

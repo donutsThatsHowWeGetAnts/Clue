@@ -27,6 +27,8 @@ public class Player {
     private boolean hasMadeFalseAccusation = false;
 	private boolean hasWeaponCard = false;
 	private boolean hasRoomCard = false;
+	private Card weaponCard = new Card();
+	private Card roomCard = new Card();
 
     public Player() {}
 
@@ -66,8 +68,8 @@ public class Player {
     public boolean addWeapon(Card card, boolean b) {
 		if (!hasWeaponCard) {
 			cardsInHand.add(card);
-			System.out.println("LENDER -- card added is " + card);
 			hasWeaponCard = b;
+			weaponCard = card;
 			return true;
 		}
 		
@@ -76,14 +78,22 @@ public class Player {
 	
     public boolean addRoom(Card card, boolean b) {
 		if (!hasRoomCard) {
-			System.out.println("LENDER -- card added is " + card);
 			cardsInHand.add(card);
 			hasRoomCard = b;
+			roomCard = card;
 			return true;
 		}
 		
 		return false;
     }
+	
+	public Card getWeapon() {
+		return weaponCard;
+	}
+	
+	public Card getRoom() {
+		return roomCard;
+	}
 
     public ArrayList<Card> getCardsInHand() {
         return cardsInHand;
