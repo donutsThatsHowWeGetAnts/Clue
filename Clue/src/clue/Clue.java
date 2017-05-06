@@ -9,7 +9,6 @@ import static clue.GamePieces.Card.TYPE_ROOM;
 import static clue.GamePieces.Card.TYPE_SUSPECT;
 import static clue.GamePieces.Card.TYPE_WEAPON;
 import clue.GamePieces.Player;
-import clue.Handlers.DealRequestHandler;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,8 +20,6 @@ public class Clue {
 
     private ArrayList<Card> shuffled = new ArrayList<Card>(TOTAL);
     private ArrayList<Card> victimSet = new ArrayList<Card>(3);
-
-    private DealRequestHandler multiplayerDealer = null;
 
     public Clue() {}
 	
@@ -110,10 +107,6 @@ public class Clue {
         return player;
     }
 
-    public void setMultiplayerHandler(DealRequestHandler multiplayerDealer) {
-        this.multiplayerDealer = multiplayerDealer;
-    }
-
     public String dealShuffledDeck() throws Exception {
 
         if (shuffled == null) {
@@ -135,21 +128,12 @@ public class Clue {
 
             player.addCard(card);
 
-            if (multiplayerDealer != null) {
-                multiplayerDealer.dealCard(card, player);
-            }
-
             player_index++;
         }
 
         String msg = "Cards have been dealt, and the players are:\n";
         for (int j = 0; j < players.size(); j++) {
             msg += players.get(j).toLongString() + "\n";
-        }
-
-        if (multiplayerDealer != null) {
-            multiplayerDealer.getSet(players.get(0));
-            multiplayerDealer.startTurn(players.get(0));
         }
 
         return msg;
