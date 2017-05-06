@@ -11,7 +11,7 @@ package clue.GamePieces;
  */
 public class Suspect {
 	
-	private static final int NUMBER_OF_SUSPECTS = 6;
+	public static final int NUMBER_OF_SUSPECTS = 6;
 	
 	/**
 	 * Suspects of the game.

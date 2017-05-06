@@ -5,6 +5,7 @@
  */
 package clue.GamePieces;
 
+import clue.Helpers.Location;
 import java.awt.Color;
 import java.util.ArrayList;
 
@@ -24,6 +25,8 @@ public class Player {
     private Notebook notebook = null;
     private Color playerColor = Color.BLUE;
     private boolean hasMadeFalseAccusation = false;
+	private boolean hasWeaponCard = false;
+	private boolean hasRoomCard = false;
 
     public Player() {}
 
@@ -35,7 +38,7 @@ public class Player {
         setComputerPlayer(computer);
         setPlayerColor(color);
     }
-
+	
     public void setLocation(Location location) {
         playerLocation = location;
     }
@@ -54,6 +57,28 @@ public class Player {
 
     public void addCard(Card card) {
         cardsInHand.add(card);
+    }
+	
+    public boolean addWeapon(Card card, boolean b) {
+		if (!hasWeaponCard) {
+			cardsInHand.add(card);
+			System.out.println("LENDER -- card added is " + card);
+			hasWeaponCard = b;
+			return true;
+		}
+		
+		return false;
+    }
+	
+    public boolean addRoom(Card card, boolean b) {
+		if (!hasRoomCard) {
+			System.out.println("LENDER -- card added is " + card);
+			cardsInHand.add(card);
+			hasRoomCard = b;
+			return true;
+		}
+		
+		return false;
     }
 
     public ArrayList<Card> getCardsInHand() {
@@ -78,13 +103,21 @@ public class Player {
         }
         return hasCards;
     }
+	
+	public String printCards() {
+		String s = playerName + " ";
+		for (Card c: cardsInHand) {
+			s += c.toString() + " ";
+		}
+		return s;
+	}
 
     public String toString() {
         return getPlayerCard().toString();
     }
 
     public String toLongString() {
-        String location = (playerLocation != null && playerLocation.getRoomId() != -1 ? "in the " + playerLocation.getRoomCard().toString() : "outside of a room");
+        String location = (playerLocation != null && playerLocation.getRoomId() != 0 ? "in the " + playerLocation.getRoomCard().toString() : "outside of a room");
         return getPlayerCard().toString() + ", played by " + (isComputerPlayer() ? "computer" : getPlayerName()) + " is currently " + location + ".";
     }
 

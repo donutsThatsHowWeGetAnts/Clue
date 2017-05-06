@@ -29,7 +29,7 @@ public class Weapon {
 		/**
 		 *
 		 */
-		Dagger(2),
+		Knife(2),
 
 		/**
 		 *
@@ -49,7 +49,7 @@ public class Weapon {
 		/**
 		 *
 		 */
-		Spanner(6);
+		Wrench(6);
 
 		private int numVal;
 

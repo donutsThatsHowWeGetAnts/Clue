@@ -22,7 +22,12 @@ public class Rooms {
 	 * Rooms of the game.
 	 */
 	public enum room {
-
+		
+		/**
+		 * 
+		 */
+		None(0),
+		
 		/**
 		 *
 		 */
@@ -41,7 +46,7 @@ public class Rooms {
 		/**
 		 *
 		 */
-		Cellar(4),
+		Ballroom(4),
 
 		/**
 		 *

@@ -49,6 +49,7 @@ public class Colors {
 	 * @param name
 	 * @return 
 	 */
+	
 	public Color getColor(String name) {
 		return colors.getOrDefault(name, Color.BLUE);
 	}
