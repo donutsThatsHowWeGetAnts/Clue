@@ -10,6 +10,7 @@ import clue.GameEngine.CardManager;
 import clue.GamePieces.Card;
 import clue.GamePieces.Die;
 import clue.GamePieces.Player;
+import clue.Helpers.Colors;
 import clue.Helpers.Location;
 import clue.Network.Client;
 import clue.Network.ClientInstance;
@@ -49,6 +50,8 @@ import javax.swing.border.LineBorder;
  */
 public class GUI {
 
+	
+	private Colors colors = new Colors();
 	
 	Player scarletPlayer = new Player();
 	Player greenPlayer = new Player();
@@ -98,7 +101,6 @@ public class GUI {
 		}
 	};
 	private final int defaultServerPort = 6666;
-	private final int defaultClientPort = 7777;
 	
 	private Client client = null;
 	private ClientListener clientListener = new ClientListener() {
@@ -115,6 +117,7 @@ public class GUI {
 
 		@Override
 		public void recivedInput(String msg) {
+			// TODO : add reading of data here
 			System.out.println("LENDER -- received message: " + msg);
 		}
 
@@ -205,8 +208,6 @@ public class GUI {
 	}
 	
 	private void distributeCards() {
-		
-		boolean done = false;
 		
 		while (!CardManager.getInstance().getAvailableCards().isEmpty()) {
 			int size = CardManager.getInstance().getAvailableCards().size();
@@ -500,7 +501,7 @@ public class GUI {
 				if (jj >= 0 && jj <= 3 && ii >= 0 && ii <= 4) {
 					
 					// STUDY ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if (ii == 4 && jj == 3) {
@@ -541,7 +542,7 @@ public class GUI {
 				} else if (jj >= 6 && jj <= 12 && ii >= 0 && ii <= 6) {
 					
 					// HALL ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if ((ii == 6 && (jj == 8 || jj == 9)) || (ii == 3 && jj == 6)) {
@@ -579,7 +580,7 @@ public class GUI {
 				} else if(jj >= 15 && jj <= 21 && ii >= 0 && ii <= 5) {
 					
 					// LOUNGE ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if (ii == 5 && jj == 15) {
@@ -623,7 +624,7 @@ public class GUI {
 				} else if (jj >= 0 && jj <= 3 && ii >= 7 && ii <= 10) {
 					
 					// LIBRARY ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if ((ii == 8 && jj == 3) || (ii == 10 && jj == 1)) {
@@ -662,7 +663,7 @@ public class GUI {
 				} else if(jj >= 0 && jj <= 3 && ii >= 13 && ii <= 16) {
 					
 					// BILLARDS ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if ((ii == 13 && jj == 0) || (ii == 15 && jj == 3)) {
@@ -702,7 +703,7 @@ public class GUI {
 				} else if (jj >= 0 && jj <= 3 && ii >= 19 && ii <= 21) {
 					
 					// CONSERVATORY ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if (ii == 19 && jj == 3) {
@@ -742,7 +743,7 @@ public class GUI {
 				} else if (jj >= 6 && jj <= 12 && ii >= 15 && ii <= 21) {
 					
 					// BALLROOM ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if ((ii == 18 && jj == 6) || (ii == 18 && jj == 12) || (ii == 15 && jj == 7) || (ii == 15 && jj == 11)) {
@@ -780,7 +781,7 @@ public class GUI {
 				} else if(jj >= 15 && jj <= 21 && ii >= 16 && ii <= 21) {
 					
 					// KITCHEN ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if (ii == 16 && jj == 16) {
@@ -820,7 +821,7 @@ public class GUI {
 				} else if(jj >= 15 && jj <= 21 && ii >= 9 && ii <= 13) {
 					
 					// DINING ROOM
-					b.setBackground(Color.RED);
+					b.setBackground(Color.LIGHT_GRAY);
 					
 					// set the door(s)
 					if ((ii == 11 && jj == 15) || (ii == 9 && jj == 17)) {
@@ -870,10 +871,38 @@ public class GUI {
 					BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
 					
 				} else {
-					b.setBackground(Color.YELLOW);
+					b.setBackground(Color.ORANGE);
 					BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
 					BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
 				}
+				
+				// Default starting positions
+				if (ii == 18 && jj == 0) {
+					b.setBackground(Color.BLUE);
+				}
+				
+				// PURPLE
+				if (ii == 6 && jj == 0) {
+					b.setBackground(colors.getColor("PURPLE"));
+				}
+				
+				if (ii == 0 && jj == 14) {
+					b.setBackground(Color.RED);
+				}
+				
+				if (ii == 6 && jj == 21) {
+					b.setBackground(Color.YELLOW);
+				}
+				
+				if (ii == 21 && jj == 5) {
+					b.setBackground(Color.GREEN);
+				}
+				
+				if (ii == 21 && jj == 13) {
+					b.setBackground(Color.WHITE);
+				}
+				
+				
                 gameBoardSquares[jj][ii] = b;
             }
         }
