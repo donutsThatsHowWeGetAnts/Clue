@@ -1188,7 +1188,7 @@ public class GUI {
             public void run() {
                 GUI gui = new GUI();
 
-                JFrame f = new JFrame("Clue Board Game");
+                JFrame f = new JFrame("Clueless Board Game");
 				Dimension dimension = new Dimension();
 				dimension.height = HEIGHT;
 				dimension.width = WIDTH;
