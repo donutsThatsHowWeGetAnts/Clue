@@ -1,11 +1,10 @@
 package clue.Helpers;
 
+import clue.GamePieces.Card;
 import java.awt.Color;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-import clue.GamePieces.Card;
 
 public class Location implements Node<Location>, Serializable {
 
@@ -140,6 +139,10 @@ public class Location implements Node<Location>, Serializable {
     public void addNeighbor(Location l) {
         neighbors.add(l);
     }
+	
+	public List<Location> getNeighbor() {
+		return neighbors;
+	}
 
     public void removeNeighbor(Location l) {
         neighbors.remove(l);

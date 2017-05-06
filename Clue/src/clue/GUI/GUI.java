@@ -6,7 +6,9 @@
 package clue.GUI;
 
 import clue.Clue;
+import clue.Dialog.SuggestionDialog;
 import clue.GameEngine.CardManager;
+import clue.GameEngine.LocationManager;
 import clue.GamePieces.Card;
 import clue.GamePieces.Die;
 import clue.GamePieces.Player;
@@ -30,13 +32,17 @@ import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
@@ -52,15 +58,27 @@ public class GUI {
 
 	
 	private Colors colors = new Colors();
+	private Card globalCard = new Card();
 	
-	Player scarletPlayer = new Player();
-	Player greenPlayer = new Player();
-	Player whitePlayer = new Player();
-	Player profPlumPlayer = new Player();
-	Player mrsPeacock = new Player();
-	Player colMustardPlayer = new Player();
+	private Player scarletPlayer = new Player();
+	private Player greenPlayer = new Player();
+	private Player whitePlayer = new Player();
+	private Player profPlumPlayer = new Player();
+	private Player mrsPeacockPlayer = new Player();
+	private Player colMustardPlayer = new Player();
+	
+	private HashMap<String, Integer> playerTurn = new HashMap<String, Integer>();
+	private static String currentPlayerTurn = "Miss Scarlet";
+	private int takeTurnCounter = 0;
 	
 	private Clue clue = new Clue();
+	
+	private List<Location> canMoveTo = new ArrayList<Location>();
+	private List<Location> roomPositionMoveTo = new ArrayList<Location>();
+	private List<Location> hallwayPositionMoveTo = new ArrayList<Location>();
+	private List<Location> freeSpaceMoveTo = new ArrayList<Location>();
+	
+	private static final String inChargeIP = "10.0.5.15";
 	
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
     private JButton[][] gameBoardSquares = new JButton[22][22];
@@ -70,9 +88,9 @@ public class GUI {
 	private static final int HEIGHT = 700;
 	private BoardGameManager boardGameManager = null;
 	JButton ready = new JButton("Ready");
-	JButton roll = new JButton("Roll Die");
-	JButton viewCards = new JButton("View Cards");
-	JButton takeNotes = new JButton("Take Notes");
+	JButton takeTurn = new JButton("Take Turn");
+	JButton viewCards = new JButton("View My Cards");
+	JButton makeSuggestion = new JButton("Make Suggestion");
 	private List<ClientInstance> playerList = new ArrayList<ClientInstance>();
 	private String serverIP = "";
 	private String clientIP = "";
@@ -92,7 +110,35 @@ public class GUI {
 
 		@Override
 		public void recivedInput(ClientInstance client, String msg) {
-			System.out.println("LENDER -- received message from " + client.ip + " with message: " + msg);
+			
+			String IP = client.ip.toString();
+			IP = IP.replace("/", "");
+			
+			// handle messages from the master controller
+			if (inChargeIP.equalsIgnoreCase(client.ip.toString().replace("/", ""))) {
+				if (msg.contains("KILL")) {
+					CardManager.getInstance().setKiller(globalCard.getCard(msg.replace("KILL", "")));
+				} else if (msg.contains("WEA")) {
+					CardManager.getInstance().setWeapon(globalCard.getCard(msg.replace("WEA", "")));
+				} else if (msg.contains("ROO")) {
+					CardManager.getInstance().setRoom(globalCard.getCard(msg.replace("ROO", "")));
+				} else if (msg.contains("MOVE")) {
+					Location lo = new Location(0,0);
+					String[] split = msg.replace("MOVE", "").split("\\s+");
+					//LocationManager.getInstance().moveToLocation(null, greenPlayer)
+					System.out.println("LENDER -- move event is " + msg);
+				}
+				
+				System.out.println("LENDER -- the solution from MASTER CONTROLLER is " + CardManager.getInstance().toString());
+			} else {
+				if (msg.contains("MOVE")) {
+					Location lo = new Location(0,0);
+					String[] split = msg.replace("MOVE", "").split("\\s+");
+					//LocationManager.getInstance().moveToLocation(null, greenPlayer
+					System.out.println("LENDER -- move event is " + split);
+				}
+			}
+			
 		}
 
 		@Override
@@ -138,14 +184,14 @@ public class GUI {
 	};
 	
     GUI() {
-        initialiseGUI();
+        initializeGUI();
     }
 	
 	public void enableReadyButton() {
 		ready.setVisible(true);
 	}
 	
-	public void initialiseServer() {
+	public void initializeServer() {
 		try(final DatagramSocket socket = new DatagramSocket()){
 			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
 			serverIP = socket.getLocalAddress().getHostAddress();
@@ -159,15 +205,22 @@ public class GUI {
 		}
 	}
 	
-	public void initialiseDefaultPlayers() {
+	public void initializeDefaultPlayers() {
 		
 		// give each player their card
 		scarletPlayer.addCard(Card.scarlet);
 		greenPlayer.addCard(Card.green);
 		whitePlayer.addCard(Card.white);
 		profPlumPlayer.addCard(Card.plum);
-		mrsPeacock.addCard(Card.peacock);
+		mrsPeacockPlayer.addCard(Card.peacock);
 		colMustardPlayer.addCard(Card.mustard);
+		
+		playerTurn.put(Card.scarlet.desc, 0);
+		playerTurn.put(Card.green.desc, 0);
+		playerTurn.put(Card.white.desc, 0);
+		playerTurn.put(Card.plum.desc, 0);
+		playerTurn.put(Card.peacock.desc, 0);
+		playerTurn.put(Card.mustard.desc, 0);
 		
 		clue.addPlayer(Card.green, "MrGreen", Color.GREEN, false);
 		clue.addPlayer(Card.scarlet, "MissScarlet", Color.RED, false);
@@ -242,7 +295,7 @@ public class GUI {
 					if (room) {
 						break;
 					}
-					room = mrsPeacock.addRoom(c, true);
+					room = mrsPeacockPlayer.addRoom(c, true);
 					if (room) {
 						break;
 					}
@@ -266,7 +319,7 @@ public class GUI {
 					if (weapon) {
 						break;
 					}
-					weapon = mrsPeacock.addWeapon(c, true);
+					weapon = mrsPeacockPlayer.addWeapon(c, true);
 					if (weapon) {
 						break;
 					}
@@ -282,7 +335,7 @@ public class GUI {
 	private void printPlayerCards() {
 		String all = "";
 		all += scarletPlayer.printCards();
-		all += mrsPeacock.printCards();
+		all += mrsPeacockPlayer.printCards();
 		all += colMustardPlayer.printCards();
 		all += greenPlayer.printCards();
 		all += profPlumPlayer.printCards();
@@ -380,7 +433,7 @@ public class GUI {
 		
 	}
 	
-	public void initialiseClient() {
+	public void initializeClient() {
 		try(final DatagramSocket socket = new DatagramSocket()){
 			socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
 			clientIP = socket.getLocalAddress().getHostAddress();
@@ -411,7 +464,14 @@ public class GUI {
 		}
 	}
 	
-	public void initialiseGUI() {
+	public void initializeGUI() {
+		scarletPlayer.setPlayerColor(Color.RED);
+		greenPlayer.setPlayerColor(Color.GREEN);
+		whitePlayer.setPlayerColor(Color.WHITE);
+		profPlumPlayer.setPlayerColor(colors.getColor("PURPLE"));
+		mrsPeacockPlayer.setPlayerColor(Color.BLUE);
+		colMustardPlayer.setPlayerColor(Color.YELLOW);
+		
         // setup the main GUI
         gui.setBorder(new EmptyBorder(5, 5, 5, 5));
         JToolBar tools = new JToolBar();
@@ -423,10 +483,10 @@ public class GUI {
 		join.addActionListener((ActionEvent e) -> {
 			// join the game
 			if (null == server) {
-				initialiseServer();
+				initializeServer();
 			}
-			initialiseClient();
-			initialiseDefaultPlayers();
+			initializeClient();
+			initializeDefaultPlayers();
 			enableReadyButton();
 		});
 		
@@ -454,14 +514,14 @@ public class GUI {
 		tools.add(ready);
         tools.addSeparator();
 		
-		roll.setVisible(false);
+		takeTurn.setVisible(false);
 		// add the listener to the jbutton to handle the "pressed" event
-		roll.addActionListener((ActionEvent e) -> {
-			// roll die
-			rollDie();
+		takeTurn.addActionListener((ActionEvent e) -> {
+			// take turn
+			takeTurn();
 		});
 		
-		tools.add(roll);
+		tools.add(takeTurn);
         tools.addSeparator();
 		
 		viewCards.setVisible(false);
@@ -474,14 +534,14 @@ public class GUI {
 		tools.add(viewCards);
         tools.addSeparator();
 		
-		takeNotes.setVisible(false);
+		makeSuggestion.setVisible(false);
 		// add the listener to the jbutton to handle the "pressed" event
-		takeNotes.addActionListener((ActionEvent e) -> {
-			// take notes
-			takeNotes();
+		makeSuggestion.addActionListener((ActionEvent e) -> {
+			// suggestion
+			makeSuggestion();
 		});
 		
-		tools.add(takeNotes);
+		tools.add(makeSuggestion);
         tools.addSeparator();
 
         gui.add(new JLabel(""), BorderLayout.LINE_START);
@@ -490,6 +550,8 @@ public class GUI {
         gameBoard.setBorder(new LineBorder(Color.BLACK));
         gui.add(gameBoard);
 
+		Location l = new Location(0,0);
+		
         // create the board squares
         Insets buttonMargin = new Insets(0,0,0,0);
         for (int ii = 0; ii < gameBoardSquares.length; ii++) {
@@ -506,15 +568,25 @@ public class GUI {
 					// set the door(s)
 					if (ii == 4 && jj == 3) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
+					} else if (ii == 4 && jj == 2) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 2 && jj >= 0 && jj <= 4) {
@@ -547,15 +619,18 @@ public class GUI {
 					// set the door(s)
 					if ((ii == 6 && (jj == 8 || jj == 9)) || (ii == 3 && jj == 6)) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 3 && jj >= 7 && jj <= 12 ) {
@@ -585,15 +660,26 @@ public class GUI {
 					// set the door(s)
 					if (ii == 5 && jj == 15) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
+						
+					} else if (ii == 5 && jj == 16) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 3 && jj >= 15 && jj <= 21 ) {
@@ -629,15 +715,18 @@ public class GUI {
 					// set the door(s)
 					if ((ii == 8 && jj == 3) || (ii == 10 && jj == 1)) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 9 && jj >= 0 && jj <= 4) {
@@ -668,15 +757,18 @@ public class GUI {
 					// set the door(s)
 					if ((ii == 13 && jj == 0) || (ii == 15 && jj == 3)) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 14 && jj >= 0 && jj <= 3) {
@@ -708,15 +800,25 @@ public class GUI {
 					// set the door(s)
 					if (ii == 19 && jj == 3) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
+					} else if (ii == 19 && jj == 2) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 20 && jj >= 0 && jj <= 3) {
@@ -748,15 +850,18 @@ public class GUI {
 					// set the door(s)
 					if ((ii == 18 && jj == 6) || (ii == 18 && jj == 12) || (ii == 15 && jj == 7) || (ii == 15 && jj == 11)) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 18 && jj >= 7 && jj <= 10 ) {
@@ -786,15 +891,25 @@ public class GUI {
 					// set the door(s)
 					if (ii == 16 && jj == 16) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
+					} else if (ii == 16 && jj == 17) {
+						b.setBackground(Color.BLACK);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 18 && jj >= 16 && jj <= 19) {
@@ -826,15 +941,18 @@ public class GUI {
 					// set the door(s)
 					if ((ii == 11 && jj == 15) || (ii == 9 && jj == 17)) {
 						b.setBackground(Color.BLACK);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, true);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, true);
+						l = new Location(jj, ii);
+						l.setColor(Color.BLACK);
+						canMoveTo.add(l);
 					} else {
 						b.enableInputMethods(false);
 						b.setSelected(false);
 						b.setBorderPainted(false);
 						b.setFocusPainted(false);
-						BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-						BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+						BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+						BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					}
 					
 					if (ii == 11 && jj >= 16 && jj <= 20) {
@@ -867,45 +985,166 @@ public class GUI {
 					b.setSelected(false);
 					b.setBorderPainted(false);
 					b.setFocusPainted(false);
-					BoardGameManager.getInstance().setCanClickButton(ii, jj, false);
-					BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					BoardGameManager.getInstance().setCanClickButton(jj, ii, false);
+					BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 					
 				} else {
 					b.setBackground(Color.ORANGE);
-					BoardGameManager.getInstance().setCanClickButton(ii, jj, true);
-					BoardGameManager.getInstance().setIsDoorButton(ii, jj, false);
+					BoardGameManager.getInstance().setCanClickButton(jj, ii, true);
+					BoardGameManager.getInstance().setIsDoorButton(jj, ii, false);
 				}
 				
 				// Default starting positions
 				if (ii == 18 && jj == 0) {
 					b.setBackground(Color.BLUE);
+					mrsPeacockPlayer.setLocation(new Location(jj, ii));
+					l = new Location(jj, ii);
+					l.setColor(Color.BLUE);
+					
+					Location neigh = new Location(3, 19);
+					l.addNeighbor(neigh);
+					neigh = new Location(2, 19);
+					l.addNeighbor(neigh);
+					
+					canMoveTo.add(l);
+					hallwayPositionMoveTo.add(l);
 				}
 				
-				// PURPLE
 				if (ii == 6 && jj == 0) {
 					b.setBackground(colors.getColor("PURPLE"));
+					profPlumPlayer.setLocation(new Location(jj, ii));
+					l = new Location(jj, ii);
+					l.setColor(colors.getColor("PURPLE"));
+					
+					Location neigh = new Location(3, 4);
+					l.addNeighbor(neigh);
+					neigh = new Location(2, 4);
+					l.addNeighbor(neigh);
+					
+					canMoveTo.add(l);
+					hallwayPositionMoveTo.add(l);
 				}
 				
 				if (ii == 0 && jj == 14) {
 					b.setBackground(Color.RED);
+					scarletPlayer.setLocation(new Location(jj, ii));
+					l = new Location(jj, ii);
+					l.setColor(Color.RED);
+					
+					Location neigh = new Location(15, 5);
+					l.addNeighbor(neigh);
+					
+					canMoveTo.add(l);
+					hallwayPositionMoveTo.add(l);
 				}
 				
 				if (ii == 6 && jj == 21) {
 					b.setBackground(Color.YELLOW);
+					colMustardPlayer.setLocation(new Location(jj, ii));
+					l = new Location(jj, ii);
+					l.setColor(Color.YELLOW);
+					
+					Location neigh = new Location(15, 5);
+					l.addNeighbor(neigh);
+					neigh = new Location(16, 5);
+					l.addNeighbor(neigh);
+					neigh = new Location(17, 9);
+					l.addNeighbor(neigh);
+					
+					canMoveTo.add(l);
+					hallwayPositionMoveTo.add(l);
 				}
 				
 				if (ii == 21 && jj == 5) {
 					b.setBackground(Color.GREEN);
+					greenPlayer.setLocation(new Location(jj, ii));
+					l = new Location(jj, ii);
+					l.setColor(Color.GREEN);
+
+					Location neigh = new Location(3, 19);
+					l.addNeighbor(neigh);
+					neigh = new Location(2, 19);
+					l.addNeighbor(neigh);
+					neigh = new Location(6, 18);
+					l.addNeighbor(neigh);
+					
+					canMoveTo.add(l);
+					hallwayPositionMoveTo.add(l);
 				}
 				
 				if (ii == 21 && jj == 13) {
 					b.setBackground(Color.WHITE);
+					whitePlayer.setLocation(new Location(jj, ii));
+					l = new Location(jj, ii);
+					l.setColor(Color.WHITE);
+					
+					Location neigh = new Location(12, 18);
+					l.addNeighbor(neigh);
+					
+					canMoveTo.add(l);
+					hallwayPositionMoveTo.add(l);
 				}
 				
+				if ((jj == 4 && ii == 0) || (jj == 0 && ii == 11) || (jj == 9 && ii == 7) || (jj == 9 && ii == 13) || (jj == 21 && ii == 15) || (jj == 12 && ii == 9) || (jj == 6 && ii == 9)) {
+					
+					l = new Location(jj, ii);
+					l.setColor(Color.ORANGE);
+					
+					Location neigh = new Location(0,0);
+					
+					// setup neighbors
+					if (jj == 4 && ii == 0) {
+						neigh = new Location(3, 4);
+						l.addNeighbor(neigh);
+						neigh = new Location(2, 4);
+						l.addNeighbor(neigh);
+						neigh = new Location(6, 3);
+						l.addNeighbor(neigh);
+					} else if (jj == 0 && ii == 11) {
+						neigh = new Location(1, 10);
+						l.addNeighbor(neigh);
+						neigh = new Location(0, 13);
+						l.addNeighbor(neigh);
+					} else if (jj == 9 && ii == 7) {
+						neigh = new Location(9, 6);
+						l.addNeighbor(neigh);
+					} else if (jj == 9 && ii == 13) {
+						neigh = new Location(7, 15);
+						l.addNeighbor(neigh);
+						neigh = new Location(11, 15);
+						l.addNeighbor(neigh);
+					} else if (jj == 21 && ii == 15) {
+						neigh = new Location(16, 16);
+						l.addNeighbor(neigh);
+						neigh = new Location(16, 17);
+						l.addNeighbor(neigh);
+					} else if (jj == 12 && ii == 9) {
+						neigh = new Location(15, 11);
+						l.addNeighbor(neigh);
+					} else if (jj == 6 && ii == 9) {
+						neigh = new Location(3, 8);
+						l.addNeighbor(neigh);
+					}
+					
+					
+					
+					canMoveTo.add(l);
+					hallwayPositionMoveTo.add(l);
+					b.setBackground(Color.CYAN);
+				}
 				
                 gameBoardSquares[jj][ii] = b;
             }
         }
+		
+		// setup the locations we can move to
+		LocationManager.getInstance().setup(canMoveTo);
+		LocationManager.getInstance().moveToLocation(whitePlayer.getLocation(), whitePlayer);
+		LocationManager.getInstance().moveToLocation(greenPlayer.getLocation(), greenPlayer);
+		LocationManager.getInstance().moveToLocation(colMustardPlayer.getLocation(), colMustardPlayer);
+		LocationManager.getInstance().moveToLocation(scarletPlayer.getLocation(), scarletPlayer);
+		LocationManager.getInstance().moveToLocation(profPlumPlayer.getLocation(), profPlumPlayer);
+		LocationManager.getInstance().moveToLocation(mrsPeacockPlayer.getLocation(), mrsPeacockPlayer);
 
         // fill the game board
         gameBoard.add(new JLabel(""));
@@ -967,27 +1206,271 @@ public class GUI {
     }
 
 	private void viewMyCards() {
+	}
+
+	private void makeSuggestion() {
+		SuggestionDialog s = new SuggestionDialog();
+		s.setVisible(true);
+	}
+
+	private void takeTurn() {
 		
-	}
+		Location pLoc = new Location(0, 0);
+		Location de = new Location(0,0);
+		List<Location> list = new ArrayList<Location>();
+		String[] options;
+		int response = 0;
+		boolean didMove = false;
+		
+		switch (takeTurnCounter%6) {
+			case 0:
+				currentPlayerTurn = Card.scarlet.desc;
+				pLoc = scarletPlayer.getLocation();
+				
+				list = LocationManager.getInstance().getNeighbors(pLoc);
+				
+				for (Location d: hallwayPositionMoveTo) {
+					for (Location e: canMoveTo) {
+						if (d.getX() == e.getX() && d.getY() == e.getY()) {
+							if (LocationManager.getInstance().available(d)) {
+								list.add(d);
+							}
+						}
+					}
+				}
+				
+				options = new String[list.size()];
+				
+				for (int index = 0; index < list.size(); index++) {
+					options[index] = "X: " + list.get(index).getX() + " Y: " + list.get(index).getY();
+				}
+				
+				response = JOptionPane.showOptionDialog(null, "Miss Scarlet, please choose a location to go to", "Move Choice", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				de = scarletPlayer.getLocation();
+				
+				System.out.println("LENDER -- de is " + de.getX() + ", " + de.getY());
+				
+				didMove = LocationManager.getInstance().moveToLocation(list.get(response), scarletPlayer);
+				
+				if (didMove) {
+					scarletPlayer.setLocation(list.get(response));
+				}
+				
+				break;
+			case 1:
+				currentPlayerTurn = Card.plum.desc;
+				
+				pLoc = profPlumPlayer.getLocation();
+				
+				list = LocationManager.getInstance().getNeighbors(pLoc);
+				
+				for (Location d: hallwayPositionMoveTo) {
+					for (Location e: canMoveTo) {
+						if (d.getX() == e.getX() && d.getY() == e.getY()) {
+							if (LocationManager.getInstance().available(d)) {
+								list.add(d);
+							}
+						}
+					}
+				}
+				
+				options = new String[list.size()];
+				
+				for (int index = 0; index < list.size(); index++) {
+					options[index] = "X: " + list.get(index).getX() + " Y: " + list.get(index).getY();
+				}
+				
+				response = JOptionPane.showOptionDialog(null, "Prof Plum, please choose a location to go to", "Move Choice", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				de = profPlumPlayer.getLocation();
+				
+				didMove = LocationManager.getInstance().moveToLocation(list.get(response), profPlumPlayer);
+				
+				if (didMove) {
+					profPlumPlayer.setLocation(list.get(response));
+				}
+				
+				break;
+			case 2:
+				currentPlayerTurn = Card.green.desc;
+				
+				pLoc = greenPlayer.getLocation();
+				
+				list = LocationManager.getInstance().getNeighbors(pLoc);
+				
+				for (Location d: hallwayPositionMoveTo) {
+					for (Location e: canMoveTo) {
+						if (d.getX() == e.getX() && d.getY() == e.getY()) {
+							if (LocationManager.getInstance().available(d)) {
+								list.add(d);
+							}
+						}
+					}
+				}
+				
+				options = new String[list.size()];
+				
+				for (int index = 0; index < list.size(); index++) {
+					options[index] = "X: " + list.get(index).getX() + " Y: " + list.get(index).getY();
+				}
+				
+				response = JOptionPane.showOptionDialog(null, "Mr. Green, please choose a location to go to", "Move Choice", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				de = greenPlayer.getLocation();
+				
+				didMove = LocationManager.getInstance().moveToLocation(list.get(response), greenPlayer);
+				
+				if (didMove) {
+					greenPlayer.setLocation(list.get(response));
+				}
+				
+				break;
+			case 3:
+				currentPlayerTurn = Card.white.desc;
+				
+				pLoc = whitePlayer.getLocation();
+				
+				list = LocationManager.getInstance().getNeighbors(pLoc);
+				
+				for (Location d: hallwayPositionMoveTo) {
+					for (Location e: canMoveTo) {
+						if (d.getX() == e.getX() && d.getY() == e.getY()) {
+							if (LocationManager.getInstance().available(d)) {
+								list.add(d);
+							}
+						}
+					}
+				}
+				
+				options = new String[list.size()];
+				
+				for (int index = 0; index < list.size(); index++) {
+					options[index] = "X: " + list.get(index).getX() + " Y: " + list.get(index).getY();
+				}
+				
+				response = JOptionPane.showOptionDialog(null, "Mrs. White, please choose a location to go to", "Move Choice", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				de = whitePlayer.getLocation();
+				
+				didMove = LocationManager.getInstance().moveToLocation(list.get(response), whitePlayer);
+				
+				if (didMove) {
+					whitePlayer.setLocation(list.get(response));
+				}
 
-	private void takeNotes() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+				break;
+			case 4:
+				currentPlayerTurn = Card.mustard.desc;
+				
+				pLoc = colMustardPlayer.getLocation();
+				
+				list = LocationManager.getInstance().getNeighbors(pLoc);
+				
+				for (Location d: hallwayPositionMoveTo) {
+					for (Location e: canMoveTo) {
+						if (d.getX() == e.getX() && d.getY() == e.getY()) {
+							if (LocationManager.getInstance().available(d)) {
+								list.add(d);
+							}
+						}
+					}
+				}
+				
+				options = new String[list.size()];
+				
+				for (int index = 0; index < list.size(); index++) {
+					options[index] = "X: " + list.get(index).getX() + " Y: " + list.get(index).getY();
+				}
+				
+				response = JOptionPane.showOptionDialog(null, "Col. Mustard, please choose a location to go to", "Move Choice", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				de = colMustardPlayer.getLocation();
+				
+				didMove = LocationManager.getInstance().moveToLocation(list.get(response), colMustardPlayer);
+				
+				if (didMove) {
+					colMustardPlayer.setLocation(list.get(response));
+				}
+				
+				break;
+			case 5:
+				currentPlayerTurn = Card.peacock.desc;
+				
+				pLoc = mrsPeacockPlayer.getLocation();
+				
+				list = LocationManager.getInstance().getNeighbors(pLoc);
+				
+				for (Location d: hallwayPositionMoveTo) {
+					for (Location e: canMoveTo) {
+						if (d.getX() == e.getX() && d.getY() == e.getY()) {
+							if (LocationManager.getInstance().available(d)) {
+								list.add(d);
+							}
+						}
+					}
+				}
+				
+				options = new String[list.size()];
+				
+				for (int index = 0; index < list.size(); index++) {
+					options[index] = "X: " + list.get(index).getX() + " Y: " + list.get(index).getY();
+				}
+				
+				response = JOptionPane.showOptionDialog(null, "Mrs. Peacock, please choose a location to go to", "Move Choice", JOptionPane.DEFAULT_OPTION, JOptionPane.PLAIN_MESSAGE, null, options, options[0]);
+				
+				de = mrsPeacockPlayer.getLocation();
+				
+				didMove = LocationManager.getInstance().moveToLocation(list.get(response), mrsPeacockPlayer);
+				
+				if (didMove) {
+					mrsPeacockPlayer.setLocation(list.get(response));
+				}
+				
+				break;
+		}
+		
+		LocationManager.getInstance().makeDefaultColor(de);
+		Iterator it = LocationManager.getInstance().getOccupied().entrySet().iterator();
 
-	private void rollDie() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		while(it.hasNext()) {
+			Map.Entry<Location, Boolean> pair = (Map.Entry) it.next();
+			gameBoardSquares[pair.getKey().getX()][pair.getKey().getY()].setBackground(pair.getKey().getColor());
+		}
+		
+		LocationManager.getInstance().printOccupied();
+		
+		if (playerList.size() == 1) {
+			if (currentPlayerTurn.equalsIgnoreCase(Card.scarlet.desc)) {
+				client.send("MOVE" + scarletPlayer.getLocation().getX() + " " + scarletPlayer.getLocation().getY() + " " + Card.scarlet.desc);
+			} else if (currentPlayerTurn.equalsIgnoreCase(Card.plum.desc)) {
+				client.send("MOVE" + profPlumPlayer.getLocation().getX() + " " + profPlumPlayer.getLocation().getY() + " " + Card.plum.desc);
+			} else if (currentPlayerTurn.equalsIgnoreCase(Card.green.desc)) {
+				client.send("MOVE" + greenPlayer.getLocation().getX() + " " + greenPlayer.getLocation().getY() + " " + Card.green.desc);
+			} else if (currentPlayerTurn.equalsIgnoreCase(Card.white.desc)) {
+				client.send("MOVE" + whitePlayer.getLocation().getX() + " " + whitePlayer.getLocation().getY() + " " + Card.white.desc);
+			} else if (currentPlayerTurn.equalsIgnoreCase(Card.mustard.desc)) {
+				client.send("MOVE" + colMustardPlayer.getLocation().getX() + " " + colMustardPlayer.getLocation().getY() + " " + Card.mustard.desc);
+			} else if (currentPlayerTurn.equalsIgnoreCase(Card.peacock.desc)) {
+				client.send("MOVE" + mrsPeacockPlayer.getLocation().getX() + " " + mrsPeacockPlayer.getLocation().getY() + " " + Card.peacock.desc);
+			}
+		} else {
+			
+		}
+		
+		takeTurnCounter += 1;
 	}
 
 	private void readyForGameToBegin() {
 		ready.setVisible(false);
 		viewCards.setVisible(true);
-		roll.setVisible(true);
-		takeNotes.setVisible(true);
+		takeTurn.setVisible(true);
+		makeSuggestion.setVisible(true);
 		
 		if (playerList.size() == 1) {
-			client.send("KILL " + CardManager.getInstance().getKiller());
-			client.send("WEA " + CardManager.getInstance().getWeapon());
-			client.send("ROO " + CardManager.getInstance().getRoom());
+			client.send("KILL" + CardManager.getInstance().getKiller());
+			client.send("WEA" + CardManager.getInstance().getWeapon());
+			client.send("ROO" + CardManager.getInstance().getRoom());
 			
 		} else {
 			

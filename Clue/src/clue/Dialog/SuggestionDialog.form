@@ -1,0 +1,326 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+  <NonVisualComponents>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup2">
+    </Component>
+    <Component class="javax.swing.ButtonGroup" name="buttonGroup3">
+    </Component>
+  </NonVisualComponents>
+  <Properties>
+    <Property name="defaultCloseOperation" type="int" value="3"/>
+  </Properties>
+  <SyntheticProperties>
+    <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
+    <SyntheticProperty name="generateCenter" type="boolean" value="false"/>
+  </SyntheticProperties>
+  <AuxValues>
+    <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_generateFQN" type="java.lang.Boolean" value="true"/>
+    <AuxValue name="FormSettings_generateMnemonicsCode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_i18nAutoMode" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_layoutCodeTarget" type="java.lang.Integer" value="1"/>
+    <AuxValue name="FormSettings_listenerGenerationStyle" type="java.lang.Integer" value="0"/>
+    <AuxValue name="FormSettings_variablesLocal" type="java.lang.Boolean" value="false"/>
+    <AuxValue name="FormSettings_variablesModifier" type="java.lang.Integer" value="2"/>
+  </AuxValues>
+
+  <Layout>
+    <DimensionLayout dim="0">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace min="-2" pref="26" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jLabel1" alignment="0" min="-2" pref="101" max="-2" attributes="0"/>
+                  <Component id="scarletBtn" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="mrGreenBtn" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="mrsWhiteBtn" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="mrsPeacockBtn" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="colMustardBtn" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="profPlumBtn" linkSize="1" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="82" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="revolverBtn" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="ropeBtn" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="candleBtn" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="knifeBtn" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="wrenchBtn" alignment="0" min="-2" max="-2" attributes="0"/>
+                  <Component id="pipeBtn" alignment="0" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace min="-2" pref="57" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="diningBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="loungeBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="studyBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="libraryBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="hallBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="conservatoryBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="kitchenBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="billiardBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="ballroomBtn" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace pref="149" max="32767" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              <Component id="makeSuggestionBtn" min="-2" max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+    <DimensionLayout dim="1">
+      <Group type="103" groupAlignment="0" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="scarletBtn" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="revolverBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="ballroomBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="mrGreenBtn" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="ropeBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="billiardBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="mrsWhiteBtn" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="candleBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="kitchenBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="mrsPeacockBtn" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="knifeBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="conservatoryBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="colMustardBtn" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="wrenchBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="hallBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="profPlumBtn" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="pipeBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="libraryBtn" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="studyBtn" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="loungeBtn" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="diningBtn" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="makeSuggestionBtn" min="-2" max="-2" attributes="0"/>
+          </Group>
+      </Group>
+    </DimensionLayout>
+  </Layout>
+  <SubComponents>
+    <Component class="javax.swing.JRadioButton" name="scarletBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Miss Scarlet"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="scarletBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="mrGreenBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Mr. Green"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mrGreenBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="mrsWhiteBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Mrs. White"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mrsWhiteBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="mrsPeacockBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Mrs. Peacock"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="mrsPeacockBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="colMustardBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Col. Mustard"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="colMustardBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="profPlumBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Prof Plum"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="profPlumBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Killer"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel2">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Weapon"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="revolverBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Revolver"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="revolverBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="ropeBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Rope"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ropeBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="candleBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Candle Stick"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="candleBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="knifeBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Knife"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="knifeBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="wrenchBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Wrench"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="wrenchBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="pipeBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Pipe"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pipeBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="jLabel3">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Room"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="ballroomBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Ballroom"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ballroomBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="billiardBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Billiard"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="billiardBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="kitchenBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Kitchen"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="kitchenBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="conservatoryBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Conservatory"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="conservatoryBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="hallBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Hall"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="hallBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="libraryBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Library"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="libraryBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="studyBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Study"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="studyBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="loungeBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Lounge"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="loungeBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JRadioButton" name="diningBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Dining Room"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="diningBtnActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="makeSuggestionBtn">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Make Suggestion"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="makeSuggestionBtnActionPerformed"/>
+      </Events>
+    </Component>
+  </SubComponents>
+</Form>

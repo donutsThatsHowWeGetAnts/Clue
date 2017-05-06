@@ -39,6 +39,10 @@ public class Player {
         setPlayerColor(color);
     }
 	
+	public void setPlayerColor(Color c) {
+		playerColor = c;
+	}
+	
     public void setLocation(Location location) {
         playerLocation = location;
     }
@@ -139,10 +143,6 @@ public class Player {
 
     public Color getPlayerColor() {
         return playerColor;
-    }
-
-    public void setPlayerColor(Color playerColor) {
-        this.playerColor = playerColor;
     }
 
     public String getPlayerName() {

@@ -118,6 +118,96 @@ public class Card {
 			return false;
 		}
 	}
+	
+	public Card getCard(String desc) {
+		
+		if (desc.equalsIgnoreCase("Miss Scarlet")) {
+			return Card.scarlet;
+		}
+
+		if (desc.equalsIgnoreCase("Professor Plum")) {
+			return Card.plum;
+		}
+
+		if (desc.equalsIgnoreCase("Mrs. White")) {
+			return Card.white;
+		}
+		
+		if (desc.equalsIgnoreCase("Colonel Mustard")) {
+			return Card.mustard;
+		}
+		
+		if (desc.equalsIgnoreCase("Mr. Green")) {
+			return Card.green;
+		}
+		
+		if (desc.equalsIgnoreCase("Mrs. Peacock")) {
+			return Card.peacock;
+		}
+		
+		if (desc.equalsIgnoreCase("Hall")) {
+			return Card.hall;
+		}
+		
+		if (desc.equalsIgnoreCase("Lounge")) {
+			return Card.lounge;
+		}
+		
+		if (desc.equalsIgnoreCase("Dining Room")) {
+			return Card.dining;
+		}
+		
+		if (desc.equalsIgnoreCase("Kitchen")) {
+			return Card.kitchen;
+		}
+
+		if (desc.equalsIgnoreCase("Ballroom")) {
+			return Card.ballroom;
+		}
+		
+		if (desc.equalsIgnoreCase("Conservatory")) {
+			return Card.conservatory;
+		}
+		
+		if (desc.equalsIgnoreCase("Billiard Room")) {
+			return Card.billiard;
+		}
+		
+		if (desc.equalsIgnoreCase("Study")) {
+			return Card.study;
+		}
+		
+		if (desc.equalsIgnoreCase("Library")) {
+			return Card.library;
+		}
+		
+		if (desc.equalsIgnoreCase("Knife")) {
+			return Card.knife;
+		}
+		
+		if (desc.equalsIgnoreCase("Rope")) {
+			return Card.rope;
+		}
+		
+		if (desc.equalsIgnoreCase("Revolver")) {
+			return Card.revolver;
+		}
+		
+		if (desc.equalsIgnoreCase("Wrench")) {
+			return Card.wrench;
+		}
+		
+		if (desc.equalsIgnoreCase("Pipe")) {
+			return Card.pipe;
+		}
+		
+		if (desc.equalsIgnoreCase("Candlestick")) {
+			return Card.candle;
+		}
+		
+		return Card.ballroom;
+		
+	}
 
 	public String getDescription() {
 		return descriptions[value];
